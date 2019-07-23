@@ -1,0 +1,17 @@
+{
+  "name": "bon-vivant-api",
+  "version": "0.0.1",
+  "description": "GraphQL backend for a cocktail book app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.4.2",
+    "mongoose": "^5.6.6"
+  }
+}
