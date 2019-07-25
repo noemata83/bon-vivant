@@ -1,8 +1,12 @@
-const Ingredient = require('../models/Ingredient');
+const Ingredient = require('../models/Ingredient').model;
 
 const createIngredient = async (ingredient) => {
   const newIngredient = await Ingredient.create(ingredient);
   return newIngredient;
+}
+
+const fetchAllIngredients = () => {
+  return Ingredient.find();
 }
 
 const findIngredient = ({ id, name }) => {
@@ -15,5 +19,6 @@ const findIngredient = ({ id, name }) => {
 
 module.exports = {
   createIngredient,
-  findIngredient
+  findIngredient,
+  fetchAllIngredients
 }

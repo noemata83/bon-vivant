@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const Ingredient = require('./Ingredient');
+const Ingredient = require('./Ingredient').schema;
+
+const SpecIngredient = new Schema({
+  quantity: Number,
+  measure: Number,
+  ingredient: Ingredient,
+  canSub: Boolean
+})
 
 const SpecSchema = new Schema({
   createdAt: {
@@ -16,7 +23,11 @@ const SpecSchema = new Schema({
     ref: "Users"
   },
   description: String,
-  ingredients: [Ingredient],
+  ingredients: [SpecIngredient],
+  directions: {
+    type: String,
+    required: 'Please provide instructions for mixing this cocktail',
+  },
   riffOn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Specs"
