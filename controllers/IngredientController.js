@@ -17,8 +17,18 @@ const findIngredient = ({ id, name }) => {
   }
 }
 
+const editIngredient = ( id, update) => {
+  return Ingredient.findByIdAndUpdate(id, update, { new: true });
+}
+
+const deleteIngredient = (id) => {
+  return Ingredient.findByIdAndDelete(id);
+}
+
 module.exports = {
   createIngredient,
   findIngredient,
-  fetchAllIngredients
+  fetchAllIngredients,
+  editIngredient,
+  deleteIngredient
 }

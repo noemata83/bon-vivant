@@ -4,6 +4,7 @@
   "description": "GraphQL backend for a cocktail book app",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

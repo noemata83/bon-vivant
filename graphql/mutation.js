@@ -2,8 +2,8 @@ const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLNonNull, GraphQLString, GraphQLList } = graphql;
 const { IngredientType, SpecIngredientInput, SpecType, UserType } = require('./types');
 
-const { createIngredient } = require('../controllers/IngredientController');
-const { createSpec, findSpec } = require('../controllers/SpecController');
+const { createIngredient, editIngredient, deleteIngredient } = require('../controllers/IngredientController');
+const { createSpec } = require('../controllers/SpecController');
 
 module.exports = new GraphQLObjectType({
   name: 'mutation',
@@ -20,6 +20,28 @@ module.exports = new GraphQLObjectType({
         return createIngredient(args);
       }
     },
+    editIngredient: {
+      type: IngredientType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLString },
+        type: { type: GraphQLString },
+        description: { type: GraphQLString },
+        spec: { type: GraphQLString }
+      },
+      resolve(parentValue, args) {
+        return editIngredient(args.id, args);
+      }
+    },
+    deleteIngredient: {
+      type: IngredientType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue, args) {
+        return deleteIngredient(args.id);
+      }
+    },
     createSpec: {
       type: SpecType,
       args: {
@@ -31,7 +53,6 @@ module.exports = new GraphQLObjectType({
       },
       async resolve(parentValue, args) {
         const newspec = await createSpec(args)
-        console.log(newspec.ingredients[0]);
         return newspec;
       }
     }

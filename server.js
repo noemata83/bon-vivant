@@ -6,6 +6,7 @@ const express = require('express'),
       config = require('./config/keys');
 
 mongoose.Promise = global.Promise;
+mongoose.set('useFindAndModify', false);  
 mongoose.connect(config.mongoURI, { useNewUrlParser: true});
 
 app.use('/graphql', expressGraphQL({
