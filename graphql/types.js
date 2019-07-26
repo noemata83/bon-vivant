@@ -1,6 +1,5 @@
 const graphql = require('graphql');
 const { GraphQLBoolean, GraphQLString, GraphQLFloat, GraphQLEnumType, GraphQLList, GraphQLObjectType, GraphQLInputObjectType, GraphQLNonNull } = graphql;
-const { findIngredient } = require('../controllers/IngredientController');
 const { findSpec } = require('../controllers/SpecController');
 
 
@@ -123,7 +122,7 @@ const SpecType = new GraphQLObjectType({
     riffOn: {
       type: SpecType,
       resolve(parentValue, args) {
-        return findSpec(args.specName)
+        return findSpec({ id: parentValue.riffOn })
       }
     },
   })

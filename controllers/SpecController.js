@@ -25,8 +25,18 @@ const findSpec = ({ id, name }) => {
   }
 }
 
+const deleteSpec = async (id) => {
+  const childSpecCollection = await Spec.find({ riffOn: id }).exec();
+  childSpecCollection.forEach(childSpec => {
+    childSpec.riffOn = undefined;
+    childSpec.save();
+  } );
+  return Spec.findByIdAndDelete(id);
+}
+
 module.exports = {
   createSpec,
   findSpec,
-  fetchAllSpecs
+  fetchAllSpecs,
+  deleteSpec,
 }
