@@ -25,6 +25,22 @@ const findSpec = ({ id, name }) => {
   }
 }
 
+const editSpec = async (id, updates) => {
+  if (updates.riffOn) {
+    const riffSpec = await findSpec({ name: updates.riffOn });
+    updates.riffOn = riffSpec._id;
+  }
+  if (updates.ingredients) {
+    updates.ingredients = updates.ingredients.map(async (ing) => {
+      const ingredient = await findIngredient({ name: ing.name });
+      delete ing.name;
+      return { ...ing, ingredient};
+    } );
+    await Promise.all(updates.ingredients).then((completed) => { updates.ingredients = completed;});
+  }
+  return Spec.findByIdAndUpdate(id, updates, { new: true });
+}
+
 const deleteSpec = async (id) => {
   const childSpecCollection = await Spec.find({ riffOn: id }).exec();
   childSpecCollection.forEach(childSpec => {
@@ -38,5 +54,6 @@ module.exports = {
   createSpec,
   findSpec,
   fetchAllSpecs,
+  editSpec,
   deleteSpec,
 }
