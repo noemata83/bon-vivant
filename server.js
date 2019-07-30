@@ -3,17 +3,21 @@ const express = require('express'),
       expressGraphQL = require('express-graphql'),
       mongoose = require('mongoose'),
       schema = require('./graphql/schema'),
-      config = require('./config/keys');
+      config = require('./config/keys'),
+      logger = require('./shared/logger');
 
 mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify', false);  
 mongoose.connect(config.mongoURI, { useNewUrlParser: true});
 
-app.use('/graphql', expressGraphQL({
+app.use('/graphql', expressGraphQL((request, response, graphQLParams) => ({
   graphiql: true,
-  schema
-}));
+  schema,
+  context: {
+    request
+  }})
+));
 
 app.listen(4000, () => {
-  console.log('Bon Vivant API server running on Port 4000');
+  logger.info('Bon Vivant Cocktail API running on port 4000');
 })
