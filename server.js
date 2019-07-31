@@ -4,17 +4,24 @@ const express = require('express'),
       mongoose = require('mongoose'),
       schema = require('./graphql/schema'),
       config = require('./config/keys'),
-      logger = require('./shared/logger');
+      logger = require('./shared/logger'),
+      jwt = require('express-jwt')
+      bodyParser = require('body-parser');
 
 mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify', false);  
 mongoose.connect(config.mongoURI, { useNewUrlParser: true});
 
-app.use('/graphql', expressGraphQL((request, response, graphQLParams) => ({
+const auth = jwt({
+  secret: config.JWT_SECRET,
+  credentialsRequired: false,
+});
+
+app.use('/graphql', bodyParser.json(), auth, expressGraphQL((request) => ({
   graphiql: true,
   schema,
   context: {
-    request
+    user: request.user
   }})
 ));
 

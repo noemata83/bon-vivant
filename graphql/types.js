@@ -155,6 +155,12 @@ const UserType = new GraphQLObjectType({
     username: {
       type: GraphQLString,
     },
+    email: {
+      type: GraphQLString,
+    },
+    token: {
+      type: GraphQLString,
+    },
     book: {
       type: new GraphQLList(SpecType)
     },

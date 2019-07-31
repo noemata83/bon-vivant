@@ -4,6 +4,16 @@ const { IngredientType, SpecIngredientInput, SpecType, UserType } = require('./t
 
 const { createIngredient, editIngredient, deleteIngredient } = require('../controllers/IngredientController');
 const { createSpec, editSpec, deleteSpec } = require('../controllers/SpecController');
+const { signUp, deleteUser, login, findUserById } = require('..//controllers/UserController');
+
+const AuthType = new GraphQLObjectType({
+  name: 'AuthToken',
+  fields: {
+    token: {
+      type: GraphQLString,
+    }
+  }
+});
 
 module.exports = new GraphQLObjectType({
   name: 'mutation',
@@ -79,6 +89,36 @@ module.exports = new GraphQLObjectType({
       },
       resolve(parentValue, args) {
         return deleteSpec(args.id);
+      }
+    },
+    signUp: {
+      type: UserType,
+      args: {
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue,args) {
+        return signUp(args.username, args.password, args.email);
+      }
+    },
+    login: {
+      type: AuthType,
+      args: {
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue, args) {
+        return login(args.username, args.password);
+      }
+    },
+    deleteUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parentValue, args) {
+        return deleteUser(args.id);
       }
     }
   }
