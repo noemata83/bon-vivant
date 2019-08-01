@@ -56,7 +56,6 @@ module.exports = new GraphQLObjectType({
         if (!user) {
           throw new Error('You are not authenticated!');
         }
-        logger.info(user);
         return getUserById(user.id);
       }
     }

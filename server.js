@@ -5,7 +5,7 @@ const express = require('express'),
       schema = require('./graphql/schema'),
       config = require('./config/keys'),
       logger = require('./shared/logger'),
-      jwt = require('express-jwt')
+      jwt = require('express-jwt'),
       bodyParser = require('body-parser');
 
 mongoose.Promise = global.Promise;
