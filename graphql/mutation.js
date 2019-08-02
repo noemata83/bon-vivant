@@ -4,7 +4,7 @@ const { IngredientType, SpecIngredientInput, SpecType, UserType } = require('./t
 
 const { createIngredient, editIngredient, deleteIngredient } = require('../controllers/IngredientController');
 const { createSpec, editSpec, deleteSpec } = require('../controllers/SpecController');
-const { signUp, deleteUser, login, findUserById } = require('..//controllers/UserController');
+const { signUp, deleteUser, login, findUserById, addIngredientToShelf, addSpecToBook } = require('..//controllers/UserController');
 
 const AuthType = new GraphQLObjectType({
   name: 'AuthToken',
@@ -52,6 +52,17 @@ module.exports = new GraphQLObjectType({
         return deleteIngredient(args.id);
       }
     },
+    addIngredientToShelf: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) } },
+      resolve(parentValue, args, { user }) {
+        if (!user) {
+          throw new Error('You are not logged in.');
+        }
+        return addIngredientToShelf(user.id, args.id);
+      }
+    },
     createSpec: {
       type: SpecType,
       args: {
@@ -89,6 +100,18 @@ module.exports = new GraphQLObjectType({
       },
       resolve(parentValue, args) {
         return deleteSpec(args.id);
+      }
+    },
+    addSpecToBook: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue, args, { user }) {
+        if (!user) {
+          throw new Error('You are not logged in.');
+        }
+        return addSpecToBook(user.id, args.id);
       }
     },
     signUp: {
