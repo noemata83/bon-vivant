@@ -14,7 +14,6 @@ const getUserById = async (id) => {
     return user;
   } catch(e) {
     throw new Error('User not found.');
-    return null
   }
 }
 

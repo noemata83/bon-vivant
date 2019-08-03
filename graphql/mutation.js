@@ -22,7 +22,7 @@ module.exports = new GraphQLObjectType({
       type: IngredientType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
-        type: { type: new GraphQLNonNull(GraphQLString) },
+        type: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
         description: { type: GraphQLString },
         spec: { type: GraphQLString }
       },
@@ -35,7 +35,7 @@ module.exports = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         name: { type: GraphQLString },
-        type: { type: GraphQLString },
+        type: { type: new GraphQLList(GraphQLString) },
         description: { type: GraphQLString },
         spec: { type: GraphQLString }
       },
