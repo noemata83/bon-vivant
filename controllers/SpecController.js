@@ -1,5 +1,9 @@
 const Spec = require('../models/Spec')
+const User = require('../models/User');
 const { findIngredient } = require('./IngredientController');
+const { purgeDuplicates } = require('../shared/utility');
+const R = require('ramda');
+
 
 const createSpec = async (spec) => {
   if (spec.riffOn) {
@@ -50,10 +54,35 @@ const deleteSpec = async (id) => {
   return Spec.findByIdAndDelete(id);
 }
 
+const getAvailableSpecs = async (userId) => {
+  const user = await User.findById(userId);
+  const specificIngredients = user.shelf.map(ingredient => ingredient.name);
+  const types = R.flatten(user.shelf.map(ingredient => ingredient.type));
+  const availableTypes = purgeDuplicates(types);
+  const allSpecs = await Spec.find();
+  const specs = allSpecs.filter(spec => {
+    const canMake = spec.ingredients.every(ing => {
+      if (specificIngredients.includes(ing.ingredient.name)) {
+        return true;
+      }
+      if (!ing.canSub && !specificIngredients.includes(ing.ingredient.name)) {
+        return false;
+      } else if (ing.canSub && !availableTypes.includes(ing.subWith)) {
+        return false;
+      }
+      return true;
+    });
+    return canMake;
+  });
+  return specs;
+}
+
+
 module.exports = {
   createSpec,
   findSpec,
   fetchAllSpecs,
   editSpec,
   deleteSpec,
+  getAvailableSpecs
 }

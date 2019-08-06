@@ -95,7 +95,7 @@ const SpecIngredientType = new GraphQLObjectType({
       type: GraphQLBoolean
     },
     subWith: {
-      type: new GraphQLList(GraphQLString),
+      type: GraphQLString,
     }
   })
 });
@@ -145,6 +145,9 @@ const SpecIngredientInput = new GraphQLInputObjectType({
     },
     canSub: {
       type: GraphQLBoolean
+    },
+    subWith: {
+      type: GraphQLString
     }
   })
 });

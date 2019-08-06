@@ -7,7 +7,7 @@ const SpecIngredient = new Schema({
   measure: Number,
   ingredient: Ingredient,
   canSub: Boolean,
-  subWith: [String]
+  subWith: String
 })
 
 const SpecSchema = new Schema({
