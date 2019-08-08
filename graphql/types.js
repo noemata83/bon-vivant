@@ -1,6 +1,7 @@
 const graphql = require('graphql');
 const { GraphQLBoolean, GraphQLString, GraphQLFloat, GraphQLEnumType, GraphQLList, GraphQLObjectType, GraphQLInputObjectType, GraphQLNonNull } = graphql;
 const { findSpec } = require('../controllers/SpecController');
+const { getUserById } = require('../controllers/UserController');
 
 
 const MeasureEnumType = new GraphQLEnumType({
@@ -55,29 +56,49 @@ const MeasureEnumType = new GraphQLEnumType({
 });
 
 const IngredientType = new GraphQLObjectType({
-	name: 'Ingredient',
-	fields: () => ({
-		id: {
-			type: GraphQLString
-		},
-		name: {
-			type: GraphQLString
-		},
-		type: {
-			type: new GraphQLList(GraphQLString),
-		},
-		description: {
-			type: GraphQLString
-		},
-		spec: {
-			type: SpecType,
-			resolve(parentValue, args) {
-				return findSpec(args)
-			}
-		}
-	})
+  name: 'Ingredient',
+  fields: () => ({
+    id: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    },
+    type: {
+      type: new GraphQLList(GraphQLString),
+    },
+    description: {
+      type: GraphQLString
+    },
+    spec: {
+      type: SpecType,
+      resolve(parentValue, args) {
+        return findSpec(args)
+      }
+    }
+  })
 });
 
+const ReviewType = new GraphQLObjectType({
+  name: 'Review',
+  fields: () => ({
+    rating: {
+      type: GraphQLFloat,
+    },
+    author: {
+      type: UserType,
+      resolve(parentValue,args) {
+        return getUserById(parentValue.id);
+      }
+    },
+    comment: {
+      type: GraphQLString,
+    },
+    createdAt: {
+      type: GraphQLString,
+    }
+  })
+})
 
 const SpecIngredientType = new GraphQLObjectType({
   name: 'Spec_Ingredient',
@@ -128,6 +149,9 @@ const SpecType = new GraphQLObjectType({
         return findSpec({ id: parentValue.riffOn })
       }
     },
+    reviews: {
+      type: new GraphQLList(ReviewType)
+    }
   })
 });
 

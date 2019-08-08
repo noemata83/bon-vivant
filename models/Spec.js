@@ -8,7 +8,20 @@ const SpecIngredient = new Schema({
   ingredient: Ingredient,
   canSub: Boolean,
   subWith: String
-})
+});
+
+const Review = new Schema({
+  rating: Number,
+  posted: {
+    type: Date,
+    default: Date.now()
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users"
+  },
+  comment: String,
+});
 
 const SpecSchema = new Schema({
   createdAt: {
@@ -32,7 +45,8 @@ const SpecSchema = new Schema({
   riffOn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Specs"
-  }
+  },
+  reviews: [Review],
 });
 
 module.exports = mongoose.model('Specs', SpecSchema);
