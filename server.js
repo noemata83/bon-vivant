@@ -6,7 +6,8 @@ const express = require('express'),
       config = require('./config/keys'),
       logger = require('./shared/logger'),
       jwt = require('express-jwt'),
-      bodyParser = require('body-parser');
+      bodyParser = require('body-parser'),
+      cors = require('cors');
 
 mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify', false);  
@@ -16,6 +17,8 @@ const auth = jwt({
   secret: config.JWT_SECRET,
   credentialsRequired: false,
 });
+
+app.use(cors());
 
 app.use('/graphql', bodyParser.json(), auth, expressGraphQL((request) => ({
   graphiql: true,
