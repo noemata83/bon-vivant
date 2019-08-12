@@ -21,11 +21,13 @@ const createSpec = async (spec) => {
 
 const fetchAllSpecs = () => Spec.find();
 
-const findSpec = ({ id, name }) => {
+const findSpec = ({ id, slug, name }) => {
   if (id) {
     return Spec.findById(id);
+  } else if (slug) {
+    return Spec.findOne({ slug })
   } else {
-    return Spec.findOne({ name })
+    return Spec.findOne({ name });
   }
 }
 

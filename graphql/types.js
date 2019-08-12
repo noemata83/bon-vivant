@@ -64,6 +64,9 @@ const IngredientType = new GraphQLObjectType({
     name: {
       type: GraphQLString
     },
+    slug: {
+      type: GraphQLString,
+    },
     type: {
       type: new GraphQLList(GraphQLString),
     },
@@ -132,6 +135,9 @@ const SpecType = new GraphQLObjectType({
       type: GraphQLString,
     },
     name: {
+      type: GraphQLString,
+    },
+    slug: {
       type: GraphQLString,
     },
     description: {

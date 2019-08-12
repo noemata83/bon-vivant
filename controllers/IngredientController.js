@@ -9,9 +9,11 @@ const fetchAllIngredients = () => {
   return Ingredient.find();
 }
 
-const findIngredient = ({ id, name }) => {
+const findIngredient = ({ id, slug, name }) => {
   if (id) {
     return Ingredient.findById(id);
+  } else if (slug) {
+    return Ingredient.findOne({ slug });
   } else {
     return Ingredient.findOne({ name })
   }

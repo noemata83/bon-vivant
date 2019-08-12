@@ -19,6 +19,7 @@ module.exports = new GraphQLObjectType({
     spec: {
       type: SpecType,
       args: { id: { type: GraphQLString },
+              slug: { type: GraphQLString },
               name: { type: GraphQLString} },
       resolve(parentValue, args) {
         return findSpec(args)
@@ -33,6 +34,7 @@ module.exports = new GraphQLObjectType({
     ingredient: {
       type: IngredientType,
       args: { id: { type: GraphQLString },
+              slug: { type: GraphQLString },
               name: { type: GraphQLString } },
       resolve(parentValue, args) {
         return findIngredient(args)

@@ -22,6 +22,7 @@ module.exports = new GraphQLObjectType({
       type: IngredientType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
+        slug: { type: GraphQLString },
         type: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
         description: { type: GraphQLString },
         spec: { type: GraphQLString }
@@ -35,6 +36,7 @@ module.exports = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         name: { type: GraphQLString },
+        slug: { type: GraphQLString },
         type: { type: new GraphQLList(GraphQLString) },
         description: { type: GraphQLString },
         spec: { type: GraphQLString }
@@ -67,6 +69,7 @@ module.exports = new GraphQLObjectType({
       type: SpecType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
+        slug: { type: GraphQLString },
         author: { type: GraphQLString },
         description: { type: GraphQLString },
         directions: { type: new GraphQLNonNull(GraphQLString) },
@@ -83,6 +86,7 @@ module.exports = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         name: { type: GraphQLString },
+        slug: { type: GraphQLString },
         author: { type: GraphQLString },
         description: { type: GraphQLString },
         directions: { type: GraphQLString },
