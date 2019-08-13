@@ -35,7 +35,6 @@ const SpecSchema = new Schema({
   },
   slug: {
     type: String,
-    unique: true,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,

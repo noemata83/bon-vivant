@@ -10,7 +10,6 @@ const IngredientSchema = new Schema({
   },
   slug: {
     type: String,
-    unique: true,
   },
   type: [String],
   description: String,
