@@ -8,6 +8,15 @@ const isDuplicate = (arr, id) => {
   const found = arr.findIndex(item => item.id == id);
   return found != -1;
 }
+
+const setTokenCookie = (res, token) => {
+  res.cookie("appToken", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  });
+}
+
 const getUserById = async (id) => {
   try {
     const user = await User.findById(id);
@@ -65,14 +74,16 @@ const addSpecToBook = async (userId, specId) => {
   }
 };
 
-const signUp = async (username, password, email) => {
+const signUp = async (username, password, email, res) => {
   const user = new User({ username, password, email, shelf: [], book: [] });
+  console.log(user);
   try {
     await user.save();
     const payload = { username: user.username, id: user.id };
     const options = { expiresIn: '3d' };
     const secret = config.JWT_SECRET;
     const token = jwt.sign(payload, secret, options);
+    setTokenCookie(res, token);
     return {
       ...user,
       token
@@ -82,7 +93,7 @@ const signUp = async (username, password, email) => {
   }
 }
 
-const login = async ( username, password ) => {
+const login = async ( username, password, res ) => {
   const user = await User.findOne({ username: username });
   if (user) {
     const passwordIsValid = await user.isValidPassword(password);
@@ -91,6 +102,7 @@ const login = async ( username, password ) => {
       const options = { expiresIn: '3d' };
       const secret = config.JWT_SECRET;
       const token = jwt.sign(payload, secret, options);
+      setTokenCookie(res, token);
       return {
         token
       };

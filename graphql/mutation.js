@@ -125,8 +125,8 @@ module.exports = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve(parentValue,args) {
-        return signUp(args.username, args.password, args.email);
+      resolve(_, args, { res }) {
+        return signUp(args.username, args.password, args.email, res);
       }
     },
     login: {
@@ -135,8 +135,8 @@ module.exports = new GraphQLObjectType({
         username: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve(parentValue, args) {
-        return login(args.username, args.password);
+      resolve(_, args, { res }) {
+        return login(args.username, args.password, res);
       }
     },
     deleteUser: {
