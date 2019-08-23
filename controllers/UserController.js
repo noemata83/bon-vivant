@@ -78,11 +78,10 @@ const addSpecToBook = async (userId, specId) => {
 
 const signUp = async (username, password, email, res) => {
   const user = new User({ username, password, email, shelf: [], book: [] })
-  console.log(user)
   try {
     await user.save()
     const payload = { username: user.username, id: user.id }
-    const options = { expiresIn: "3d" }
+    const options = { expiresIn: "7d" }
     const secret = config.JWT_SECRET
     const token = jwt.sign(payload, secret, options)
     setTokenCookie(res, token)
@@ -101,7 +100,7 @@ const login = async (username, password, res) => {
     const passwordIsValid = await user.isValidPassword(password)
     if (passwordIsValid) {
       const payload = { username: user.username, id: user.id }
-      const options = { expiresIn: "3d" }
+      const options = { expiresIn: "7d" }
       const secret = config.JWT_SECRET
       const token = jwt.sign(payload, secret, options)
       setTokenCookie(res, token)
