@@ -1,10 +1,23 @@
-const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLString, GraphQLList} = graphql;
-const { findIngredient, fetchAllIngredients } = require('../controllers/IngredientController');
-const { findSpec, fetchAllSpecs, getAvailableSpecs } = require('../controllers/SpecController');
-const { getAllUsers, getUserById } = require('../controllers/UserController');
-const { UserType, SpecType, IngredientType } = require('./types');
-const logger = require('../shared/logger');
+const graphql = require('graphql')
+const { GraphQLObjectType, GraphQLString, GraphQLList } = graphql
+const {
+  findIngredient,
+  fetchAllIngredients
+} = require('../controllers/IngredientController')
+const {
+  findSpec,
+  fetchAllSpecs,
+  getAvailableSpecs
+} = require('../controllers/SpecController')
+const { getAllUsers, getUserById } = require('../controllers/UserController')
+const {
+  UserType,
+  SpecType,
+  IngredientType,
+  MeasureListType
+} = require('./types')
+const logger = require('../shared/logger')
+const MEASURES = require('../models/measure')
 
 module.exports = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -18,9 +31,11 @@ module.exports = new GraphQLObjectType({
     },
     spec: {
       type: SpecType,
-      args: { id: { type: GraphQLString },
-              slug: { type: GraphQLString },
-              name: { type: GraphQLString} },
+      args: {
+        id: { type: GraphQLString },
+        slug: { type: GraphQLString },
+        name: { type: GraphQLString }
+      },
       resolve(parentValue, args) {
         return findSpec(args)
       }
@@ -33,9 +48,11 @@ module.exports = new GraphQLObjectType({
     },
     ingredient: {
       type: IngredientType,
-      args: { id: { type: GraphQLString },
-              slug: { type: GraphQLString },
-              name: { type: GraphQLString } },
+      args: {
+        id: { type: GraphQLString },
+        slug: { type: GraphQLString },
+        name: { type: GraphQLString }
+      },
       resolve(parentValue, args) {
         return findIngredient(args)
       }
@@ -46,30 +63,36 @@ module.exports = new GraphQLObjectType({
         return fetchAllIngredients()
       }
     },
+    measures: {
+      type: new GraphQLList(MeasureListType),
+      resolve(parentValue, args) {
+        return [...MEASURES]
+      }
+    },
     users: {
       type: new GraphQLList(UserType),
       resolve(parentValue, args) {
-        return getAllUsers();
+        return getAllUsers()
       }
     },
     me: {
       type: UserType,
       resolve(_, args, { user }) {
         if (!user) {
-          throw new Error('You are not authenticated!');
+          throw new Error('You are not authenticated!')
         }
-        return getUserById(user.id);
+        return getUserById(user.id)
       }
     },
     whatICanMake: {
       type: new GraphQLList(SpecType),
       resolve(_, args, { user }) {
         if (!user) {
-          throw new Error('You are not authenticated!');
+          throw new Error('You are not authenticated!')
         }
-        return getAvailableSpecs(user.id);
+        return getAvailableSpecs(user.id)
         // return true;
       }
     }
   }
-});
+})

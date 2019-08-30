@@ -1,59 +1,44 @@
-const graphql = require('graphql');
-const { GraphQLBoolean, GraphQLString, GraphQLFloat, GraphQLEnumType, GraphQLList, GraphQLObjectType, GraphQLInputObjectType, GraphQLNonNull } = graphql;
-const { findSpec } = require('../controllers/SpecController');
-const { getUserById } = require('../controllers/UserController');
-
+const graphql = require('graphql')
+const {
+  GraphQLBoolean,
+  GraphQLString,
+  GraphQLFloat,
+  GraphQLEnumType,
+  GraphQLList,
+  GraphQLObjectType,
+  GraphQLInputObjectType,
+  GraphQLNonNull
+} = graphql
+const { findSpec } = require('../controllers/SpecController')
+const { getUserById } = require('../controllers/UserController')
+const MEASURES = require('../models/measure')
 
 const MeasureEnumType = new GraphQLEnumType({
   name: 'MeasureEnum',
-  values: {
-    OZ: {
-      value: 0,
+  values: MEASURES.reduce((acc, ms, i) => {
+    return {
+      ...acc,
+      [ms.abbreviation]: {
+        value: i
+      }
+    }
+  }, {})
+})
+
+const MeasureListType = new GraphQLObjectType({
+  name: 'Measure',
+  fields: {
+    abbreviation: {
+      type: GraphQLString
     },
-    ML: {
-      value: 1,
+    plural: {
+      type: GraphQLString
     },
-    TSP: {
-      value: 2,
-    },
-    TBSP: {
-      value: 3,
-    },
-    DS: {
-      value: 4,
-    },
-    DR: {
-      value: 5,
-    },
-    PN: {
-      value: 6
-    },
-    BSP: {
-      value: 7,
-    },
-    SPL: {
-      value: 8,
-    },
-    RINSE: {
-      value: 9,
-    },
-    TWST: {
-      value: 10,
-    },
-    SPG: {
-      value: 11
-    },
-    SLI: {
-      value: 12
-    },
-    WDG: {
-      value: 13,
-    },
-    CUBE: {
-      value: 14,
+    singular: {
+      type: GraphQLString
     }
   }
-});
+})
 
 const IngredientType = new GraphQLObjectType({
   name: 'Ingredient',
@@ -65,10 +50,10 @@ const IngredientType = new GraphQLObjectType({
       type: GraphQLString
     },
     slug: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     type: {
-      type: new GraphQLList(GraphQLString),
+      type: new GraphQLList(GraphQLString)
     },
     description: {
       type: GraphQLString
@@ -80,25 +65,25 @@ const IngredientType = new GraphQLObjectType({
       }
     }
   })
-});
+})
 
 const ReviewType = new GraphQLObjectType({
   name: 'Review',
   fields: () => ({
     rating: {
-      type: GraphQLFloat,
+      type: GraphQLFloat
     },
     author: {
       type: UserType,
-      resolve(parentValue,args) {
-        return getUserById(parentValue.id);
+      resolve(parentValue, args) {
+        return getUserById(parentValue.id)
       }
     },
     comment: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     createdAt: {
-      type: GraphQLString,
+      type: GraphQLString
     }
   })
 })
@@ -107,47 +92,46 @@ const SpecIngredientType = new GraphQLObjectType({
   name: 'Spec_Ingredient',
   fields: () => ({
     quantity: {
-      type: GraphQLFloat,
+      type: GraphQLFloat
     },
     measure: {
       type: MeasureEnumType
     },
     ingredient: {
-      type: IngredientType,
+      type: IngredientType
     },
     canSub: {
       type: GraphQLBoolean
     },
     subWith: {
-      type: GraphQLString,
+      type: GraphQLString
     }
   })
-});
-
+})
 
 const SpecType = new GraphQLObjectType({
   name: 'Spec',
   fields: () => ({
     id: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     author: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     name: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     slug: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     ingredients: {
       type: new GraphQLList(SpecIngredientType)
     },
     directions: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     riffOn: {
       type: SpecType,
@@ -159,16 +143,16 @@ const SpecType = new GraphQLObjectType({
       type: new GraphQLList(ReviewType)
     }
   })
-});
+})
 
 const SpecIngredientInput = new GraphQLInputObjectType({
   name: 'Spec_Ingredient_Input',
   fields: () => ({
     quantity: {
-      type: GraphQLFloat,
+      type: GraphQLFloat
     },
     measure: {
-      type: MeasureEnumType,
+      type: MeasureEnumType
     },
     name: {
       type: new GraphQLNonNull(GraphQLString)
@@ -180,22 +164,22 @@ const SpecIngredientInput = new GraphQLInputObjectType({
       type: GraphQLString
     }
   })
-});
+})
 
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
     id: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     username: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     email: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     token: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     book: {
       type: new GraphQLList(SpecType)
@@ -204,10 +188,11 @@ const UserType = new GraphQLObjectType({
       type: new GraphQLList(IngredientType)
     }
   })
-});
+})
 
 module.exports = {
   MeasureEnumType,
+  MeasureListType,
   IngredientType,
   SpecIngredientType,
   SpecIngredientInput,
