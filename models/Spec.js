@@ -1,15 +1,18 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
-const Ingredient = require('./Ingredient').schema;
-const slugify = require('slugify');
+const mongoose = require('mongoose')
+const { Schema } = mongoose
+const slugify = require('slugify')
 
 const SpecIngredient = new Schema({
   quantity: Number,
   measure: Number,
-  ingredient: Ingredient,
+  ingredient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ingredients',
+    autopopulate: true
+  },
   canSub: Boolean,
   subWith: String
-});
+})
 
 const Review = new Schema({
   rating: Number,
@@ -19,49 +22,51 @@ const Review = new Schema({
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users"
+    ref: 'Users'
   },
-  comment: String,
-});
+  comment: String
+})
 
 const SpecSchema = new Schema({
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now()
   },
   name: {
     type: String,
     required: 'Please provide a name for this cocktail'
   },
   slug: {
-    type: String,
+    type: String
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users"
+    ref: 'Users'
   },
   description: String,
   ingredients: [SpecIngredient],
   directions: {
     type: String,
-    required: 'Please provide instructions for mixing this cocktail',
+    required: 'Please provide instructions for mixing this cocktail'
   },
   riffOn: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Specs"
+    ref: 'Specs'
   },
-  reviews: [Review],
-});
+  reviews: [Review]
+})
 
 SpecSchema.pre('save', function(next) {
-  const spec = this;
+  const spec = this
   if (spec.slug) {
-    next();
+    next()
   } else {
-    const slug = slugify(slug.name.toLowerCase());
-    spec.slug = slug;
-    next();
+    const slug = slugify(spec.name.toLowerCase())
+    spec.slug = slug
+    next()
   }
 })
 
-module.exports = mongoose.model('Specs', SpecSchema);
+SpecSchema.plugin(require('mongoose-autopopulate'))
+
+module.exports = mongoose.model('Specs', SpecSchema)

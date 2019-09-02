@@ -1,19 +1,44 @@
-const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLNonNull, GraphQLString, GraphQLList } = graphql;
-const { IngredientType, SpecIngredientInput, SpecType, UserType } = require('./types');
+const graphql = require('graphql')
+const {
+  GraphQLObjectType,
+  GraphQLNonNull,
+  GraphQLString,
+  GraphQLList
+} = graphql
+const {
+  IngredientType,
+  SpecIngredientInput,
+  SpecType,
+  UserType
+} = require('./types')
 
-const { createIngredient, editIngredient, deleteIngredient } = require('../controllers/IngredientController');
-const { createSpec, editSpec, deleteSpec } = require('../controllers/SpecController');
-const { signUp, deleteUser, login, findUserById, addIngredientToShelf, addSpecToBook } = require('..//controllers/UserController');
+const {
+  createIngredient,
+  editIngredient,
+  deleteIngredient
+} = require('../controllers/IngredientController')
+const {
+  createSpec,
+  editSpec,
+  deleteSpec
+} = require('../controllers/SpecController')
+const {
+  signUp,
+  deleteUser,
+  login,
+  findUserById,
+  addIngredientToShelf,
+  addSpecToBook
+} = require('..//controllers/UserController')
 
 const AuthType = new GraphQLObjectType({
   name: 'AuthToken',
   fields: {
     token: {
-      type: GraphQLString,
+      type: GraphQLString
     }
   }
-});
+})
 
 module.exports = new GraphQLObjectType({
   name: 'mutation',
@@ -27,8 +52,8 @@ module.exports = new GraphQLObjectType({
         description: { type: GraphQLString },
         spec: { type: GraphQLString }
       },
-      resolve(parentValue, args ) {
-        return createIngredient(args);
+      resolve(parentValue, args) {
+        return createIngredient(args)
       }
     },
     editIngredient: {
@@ -42,7 +67,7 @@ module.exports = new GraphQLObjectType({
         spec: { type: GraphQLString }
       },
       resolve(parentValue, args) {
-        return editIngredient(args.id, args);
+        return editIngredient(args.id, args)
       }
     },
     deleteIngredient: {
@@ -51,18 +76,19 @@ module.exports = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parentValue, args) {
-        return deleteIngredient(args.id);
+        return deleteIngredient(args.id)
       }
     },
     addIngredientToShelf: {
       type: UserType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLString) } },
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
       resolve(parentValue, args, { user }) {
         if (!user) {
-          throw new Error('You are not logged in.');
+          throw new Error('You are not logged in.')
         }
-        return addIngredientToShelf(user.id, args.id);
+        return addIngredientToShelf(user.id, args.id)
       }
     },
     createSpec: {
@@ -73,12 +99,14 @@ module.exports = new GraphQLObjectType({
         author: { type: GraphQLString },
         description: { type: GraphQLString },
         directions: { type: new GraphQLNonNull(GraphQLString) },
-        ingredients: { type: new GraphQLNonNull(new GraphQLList(SpecIngredientInput)) },
-        riffOn: { type: GraphQLString, }
+        ingredients: {
+          type: new GraphQLNonNull(new GraphQLList(SpecIngredientInput))
+        },
+        riffOn: { type: GraphQLString }
       },
       async resolve(parentValue, args) {
         const newspec = await createSpec(args)
-        return newspec;
+        return newspec
       }
     },
     editSpec: {
@@ -94,16 +122,16 @@ module.exports = new GraphQLObjectType({
         riffOn: { type: GraphQLString }
       },
       resolve(parentValue, args) {
-        return editSpec(args.id, args);
+        return editSpec(args.id, args)
       }
     },
     deleteSpec: {
       type: SpecType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLString) },
+        id: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parentValue, args) {
-        return deleteSpec(args.id);
+        return deleteSpec(args.id)
       }
     },
     addSpecToBook: {
@@ -113,9 +141,9 @@ module.exports = new GraphQLObjectType({
       },
       resolve(parentValue, args, { user }) {
         if (!user) {
-          throw new Error('You are not logged in.');
+          throw new Error('You are not logged in.')
         }
-        return addSpecToBook(user.id, args.id);
+        return addSpecToBook(user.id, args.id)
       }
     },
     signUp: {
@@ -126,7 +154,7 @@ module.exports = new GraphQLObjectType({
         email: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(_, args, { res }) {
-        return signUp(args.username, args.password, args.email, res);
+        return signUp(args.username, args.password, args.email, res)
       }
     },
     login: {
@@ -136,16 +164,16 @@ module.exports = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(_, args, { res }) {
-        return login(args.username, args.password, res);
+        return login(args.username, args.password, res)
       }
     },
     deleteUser: {
       type: UserType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLString) },
+        id: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parentValue, args) {
-        return deleteUser(args.id);
+        return deleteUser(args.id)
       }
     }
   }
