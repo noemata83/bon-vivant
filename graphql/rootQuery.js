@@ -2,7 +2,8 @@ const graphql = require('graphql')
 const { GraphQLObjectType, GraphQLString, GraphQLList } = graphql
 const {
   findIngredient,
-  fetchAllIngredients
+  fetchAllIngredients,
+  fetchAllIngredientTypes
 } = require('../controllers/IngredientController')
 const {
   findSpec,
@@ -14,6 +15,7 @@ const {
   UserType,
   SpecType,
   IngredientType,
+  TypeOfIngredientType,
   MeasureListType
 } = require('./types')
 const logger = require('../shared/logger')
@@ -55,6 +57,12 @@ module.exports = new GraphQLObjectType({
       },
       resolve(parentValue, args) {
         return findIngredient(args)
+      }
+    },
+    ingredientTypes: {
+      type: new GraphQLList(TypeOfIngredientType),
+      resolve(parentValue, args) {
+        return fetchAllIngredientTypes()
       }
     },
     ingredients: {

@@ -7,12 +7,15 @@ const {
 } = graphql
 const {
   IngredientType,
+  TypeOfIngredientType,
   SpecIngredientInput,
   SpecType,
   UserType
 } = require('./types')
 
 const {
+  registerIngredientType,
+  updateIngredientType,
   createIngredient,
   editIngredient,
   deleteIngredient
@@ -43,6 +46,18 @@ const AuthType = new GraphQLObjectType({
 module.exports = new GraphQLObjectType({
   name: 'mutation',
   fields: {
+    registerIngredientType: {
+      type: TypeOfIngredientType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        slug: { type: GraphQLString },
+        description: { type: GraphQLString },
+        parent: { type: GraphQLString }
+      },
+      resolve(parentValue, args) {
+        return registerIngredientType(args)
+      }
+    },
     addIngredient: {
       type: IngredientType,
       args: {

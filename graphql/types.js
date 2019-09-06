@@ -11,6 +11,9 @@ const {
 } = graphql
 const { findSpec } = require('../controllers/SpecController')
 const { getUserById } = require('../controllers/UserController')
+const {
+  fetchOneIngredientType
+} = require('../controllers/IngredientController')
 const MEASURES = require('../models/measure')
 
 const MeasureEnumType = new GraphQLEnumType({
@@ -38,6 +41,30 @@ const MeasureListType = new GraphQLObjectType({
       type: GraphQLString
     }
   }
+})
+
+const TypeOfIngredientType = new GraphQLObjectType({
+  name: 'IngredientType',
+  fields: () => ({
+    id: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    },
+    slug: {
+      type: GraphQLString
+    },
+    description: {
+      type: GraphQLString
+    },
+    parent: {
+      type: TypeOfIngredientType,
+      resolve(parentValue, args) {
+        return fetchOneIngredientType(parentValue.id)
+      }
+    }
+  })
 })
 
 const IngredientType = new GraphQLObjectType({
@@ -194,6 +221,7 @@ module.exports = {
   MeasureEnumType,
   MeasureListType,
   IngredientType,
+  TypeOfIngredientType,
   SpecIngredientType,
   SpecIngredientInput,
   SpecType,
