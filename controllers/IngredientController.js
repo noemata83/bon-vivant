@@ -19,6 +19,13 @@ const updateIngredientType = async (id, update) => {
 }
 
 const createIngredient = async ingredient => {
+  ingredient.family = ingredient.family.map(async ingType => {
+    const foundType = await IngredientType.findOne({ name: ingType })
+    return foundType._id
+  })
+  await Promise.all(ingredient.family).then(completed => {
+    ingredient.family = completed
+  })
   const newIngredient = await Ingredient.create(ingredient)
   return newIngredient
 }

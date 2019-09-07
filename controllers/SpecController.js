@@ -59,10 +59,13 @@ const deleteSpec = async id => {
   return Spec.findByIdAndDelete(id)
 }
 
+// This is broken now
 const getAvailableSpecs = async userId => {
   const user = await User.findById(userId)
   const specificIngredients = user.shelf.map(ingredient => ingredient.name)
-  const types = R.flatten(user.shelf.map(ingredient => ingredient.type))
+  const types = R.flatten(
+    user.shelf.map(ingredient => ingredient.family.map(fam => fam.name))
+  )
   const availableTypes = purgeDuplicates(types)
   const allSpecs = await Spec.find()
   const specs = allSpecs.filter(spec => {

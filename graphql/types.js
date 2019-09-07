@@ -79,6 +79,9 @@ const IngredientType = new GraphQLObjectType({
     slug: {
       type: GraphQLString
     },
+    family: {
+      type: new GraphQLList(TypeOfIngredientType)
+    },
     type: {
       type: new GraphQLList(GraphQLString)
     },
