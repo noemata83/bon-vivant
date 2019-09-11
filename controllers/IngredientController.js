@@ -1,5 +1,6 @@
 const Ingredient = require('../models/Ingredient').model
 const IngredientType = require('../models/IngredientType')
+const ObjectId = require('mongoose').Types.ObjectId
 
 const registerIngredientType = async ingredientType => {
   const newIngredientType = await IngredientType.create(ingredientType)
@@ -16,6 +17,18 @@ const fetchOneIngredientType = id => {
 
 const updateIngredientType = async (id, update) => {
   return IngredientType.findByIdAndUpdate(id, update, { new: true })
+}
+
+const deleteIngredientType = async id => {
+  const ingredientsWithRefs = await Ingredient.find({
+    family: [{ _id: ObjectId(id) }]
+  })
+  ingredientsWithRefs.forEach(ingredient => {
+    console.log(ingredient.family)
+    ingredient.family = ingredient.family.filter(type => type.id !== id)
+    ingredient.save()
+  })
+  return IngredientType.findByIdAndRemove(id)
 }
 
 const createIngredient = async ingredient => {
@@ -57,6 +70,7 @@ module.exports = {
   updateIngredientType,
   fetchAllIngredientTypes,
   fetchOneIngredientType,
+  deleteIngredientType,
   createIngredient,
   findIngredient,
   fetchAllIngredients,

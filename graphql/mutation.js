@@ -16,6 +16,7 @@ const {
 const {
   registerIngredientType,
   updateIngredientType,
+  deleteIngredientType,
   createIngredient,
   editIngredient,
   deleteIngredient
@@ -56,6 +57,15 @@ module.exports = new GraphQLObjectType({
       },
       resolve(parentValue, args) {
         return registerIngredientType(args)
+      }
+    },
+    deleteIngredientType: {
+      type: TypeOfIngredientType,
+      args: {
+        id: { type: GraphQLString }
+      },
+      resolve(parentValue, args) {
+        return deleteIngredientType(args.id)
       }
     },
     addIngredient: {

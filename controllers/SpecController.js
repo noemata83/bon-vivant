@@ -5,6 +5,7 @@ const { purgeDuplicates } = require('../shared/utility')
 const R = require('ramda')
 
 const createSpec = async spec => {
+  console.log(spec)
   if (spec.riffOn) {
     const riffSpec = await findSpec({ name: spec.riffOn })
     spec.riffOn = riffSpec._id
@@ -59,7 +60,7 @@ const deleteSpec = async id => {
   return Spec.findByIdAndDelete(id)
 }
 
-// This is broken now
+// TODO: This is broken now. FIX IT.
 const getAvailableSpecs = async userId => {
   const user = await User.findById(userId)
   const specificIngredients = user.shelf.map(ingredient => ingredient.name)
