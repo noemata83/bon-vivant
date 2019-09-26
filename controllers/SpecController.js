@@ -5,7 +5,6 @@ const { purgeDuplicates } = require('../shared/utility')
 const R = require('ramda')
 
 const createSpec = async spec => {
-  console.log(spec)
   if (spec.riffOn) {
     const riffSpec = await findSpec({ name: spec.riffOn })
     spec.riffOn = riffSpec._id
@@ -21,7 +20,10 @@ const createSpec = async spec => {
   return Spec.create(spec)
 }
 
-const fetchAllSpecs = () => Spec.find()
+const fetchAllSpecs = filter => {
+  if (!filter) return Spec.find()
+  return Spec.find(filter)
+}
 
 const findSpec = ({ id, slug, name }) => {
   if (id) {
