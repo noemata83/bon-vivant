@@ -3,6 +3,7 @@ const User = require('../models/User')
 const { findIngredient } = require('./IngredientController')
 const { purgeDuplicates } = require('../shared/utility')
 const R = require('ramda')
+const constructQuery = require('../shared/constructQuery')
 
 const createSpec = async spec => {
   if (spec.riffOn) {
@@ -20,9 +21,11 @@ const createSpec = async spec => {
   return Spec.create(spec)
 }
 
-const fetchAllSpecs = filter => {
-  if (!filter) return Spec.find()
-  return Spec.find(filter)
+const fetchAllSpecs = rFilter => {
+  if (!rFilter) return Spec.find()
+  const filter = constructQuery(rFilter)
+  console.log(filter)
+  return Spec.find(filter).populate('ingredients.ingredient')
 }
 
 const findSpec = ({ id, slug, name }) => {

@@ -18,7 +18,7 @@ const {
   TypeOfIngredientType,
   MeasureListType
 } = require('./types')
-const SpeciFilterInput = require('./filters/specFilters')
+const SpecFilterInput = require('./filters/specFilters')
 const logger = require('../shared/logger')
 const MEASURES = require('../models/measure')
 
@@ -45,8 +45,13 @@ module.exports = new GraphQLObjectType({
     },
     specs: {
       type: new GraphQLList(SpecType),
+      args: {
+        filter: {
+          type: SpecFilterInput
+        }
+      },
       resolve(parentValue, args) {
-        return fetchAllSpecs()
+        return fetchAllSpecs(args.filter)
       }
     },
     ingredient: {
@@ -68,11 +73,8 @@ module.exports = new GraphQLObjectType({
     },
     ingredients: {
       type: new GraphQLList(IngredientType),
-      args: {
-        filter: { type: SpeciFilterInput }
-      },
       resolve(parentValue, args) {
-        return fetchAllIngredients(args.filter)
+        return fetchAllIngredients()
       }
     },
     measures: {

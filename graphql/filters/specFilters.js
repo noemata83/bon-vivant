@@ -13,10 +13,10 @@ const {
 const SpecIdInput = new GraphQLInputObjectType({
   name: 'Spec_ID_Input',
   fields: {
-    $eq: {
+    eq: {
       type: GraphQLString
     },
-    $ne: {
+    ne: {
       type: GraphQLString
     }
   }
@@ -25,10 +25,10 @@ const SpecIdInput = new GraphQLInputObjectType({
 const SpecNameInput = new GraphQLInputObjectType({
   name: 'Spec_Name_Input',
   fields: {
-    $eq: {
+    eq: {
       type: GraphQLString
     },
-    $ne: {
+    ne: {
       type: GraphQLString
     },
     contains: {
@@ -55,14 +55,38 @@ const IngredientInputType = new GraphQLInputObjectType({
   }
 })
 
+const IngredientTypeInputType = new GraphQLInputObjectType({
+  name: 'Ingredient_Type_Input_Type',
+  fields: {
+    id: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    }
+  }
+})
+
 const SpecIngredientFilterInput = new GraphQLInputObjectType({
   name: 'Spec_Ingredient_Filter_Input',
   fields: {
     contains: {
-      type: new GraphQLList(IngredientInputType)
+      type: new GraphQLList(GraphQLString)
     },
     notContains: {
-      type: new GraphQLList(IngredientInputType)
+      type: new GraphQLList(GraphQLString)
+    }
+  }
+})
+
+const SpecIngredientTypeFilterInput = new GraphQLInputObjectType({
+  name: 'Spec_Ingredient_Type_Filter_Input',
+  fields: {
+    contains: {
+      type: new GraphQLList(GraphQLString)
+    },
+    notContains: {
+      type: new GraphQLList(GraphQLString)
     }
   }
 })
@@ -78,6 +102,9 @@ const SpecFilterInput = new GraphQLInputObjectType({
     },
     ingredients: {
       type: SpecIngredientFilterInput
+    },
+    ingredientTypes: {
+      type: SpecIngredientTypeFilterInput
     }
   }
 })
