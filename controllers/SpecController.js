@@ -21,11 +21,13 @@ const createSpec = async spec => {
   return Spec.create(spec)
 }
 
-const fetchAllSpecs = rFilter => {
-  if (!rFilter) return Spec.find()
+const fetchAllSpecs = (rFilter, limit) => {
+  if (!rFilter) return Spec.find().limit(limit)
   const filter = constructQuery(rFilter)
-  console.log(filter)
-  return Spec.find(filter).populate('ingredients.ingredient')
+  // console.log(limit)
+  return Spec.find(filter)
+    .populate('ingredients.ingredient')
+    .limit(limit)
 }
 
 const findSpec = ({ id, slug, name }) => {

@@ -1,5 +1,5 @@
 const graphql = require('graphql')
-const { GraphQLObjectType, GraphQLString, GraphQLList } = graphql
+const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt } = graphql
 const {
   findIngredient,
   fetchAllIngredients,
@@ -48,10 +48,13 @@ module.exports = new GraphQLObjectType({
       args: {
         filter: {
           type: SpecFilterInput
+        },
+        limit: {
+          type: GraphQLInt
         }
       },
       resolve(parentValue, args) {
-        return fetchAllSpecs(args.filter)
+        return fetchAllSpecs(args.filter, args.limit)
       }
     },
     ingredient: {
