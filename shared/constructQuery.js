@@ -81,7 +81,6 @@ module.exports = function(rawFilter) {
       rawFilter.ingredients.contains &&
       rawFilter.ingredients.contains.length > 0
     ) {
-      // filter['ingredients.ingredient.id'] = {}
       filter['ingredients.ingredient'] = {}
       filter['ingredients.ingredient']['$in'] = rawFilter.ingredients.contains
     } else if (
@@ -94,6 +93,8 @@ module.exports = function(rawFilter) {
       ]
     }
   }
+
+  // we cannot map this easily to a single query
   if (rawFilter.ingredientTypes) {
     if (
       rawFilter.ingredientTypes.contains &&
