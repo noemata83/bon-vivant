@@ -1,4 +1,4 @@
-const { castToQuery } = require('./utility')
+const { castToQueryOps } = require('./utility')
 
 test('converts nested operator keywords to mongodb operators', () => {
   const uncastQuery = {
@@ -11,7 +11,7 @@ test('converts nested operator keywords to mongodb operators', () => {
       }
     }
   }
-  expect(castToQuery(uncastQuery)).toEqual({
+  expect(castToQueryOps(uncastQuery)).toEqual({
     name: {
       $eq: 'Funny'
     },

@@ -15,7 +15,7 @@ test('constructs a valid mongoose populate object from a GraphQL query', () => {
       }
     }
   }
-  expect(constructQuery(graphQlQuery)).toEqual({
+  expect(constructQuery(graphQlQuery, 'ingredients')).toEqual({
     path: 'ingredients.ingredient',
     match: { name: { $eq: 'Test Cocktail' } },
     populate: {
