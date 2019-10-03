@@ -1,38 +1,64 @@
 const { castToQueryOps } = require('./utility')
 
 const OPERATORS = ['$eq', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin']
-module.exports = function(rawFilter, base) {
+module.exports = function(rawFilter) {
   const castQuery = castToQueryOps(rawFilter)
-  return buildUpQuery({}, base, castQuery[base])
+  return constructQueryParams(castQuery)
 }
 
-const buildUpQuery = (base, path, src) => {
+const constructQueryParams = queryObject => {
+  let filter = {}
+  let populate = {}
+  Object.keys(queryObject).forEach(key => {
+    if (isKeyAFilter(queryObject, key)) {
+      filter = {
+        ...filter,
+        [key]: { ...queryObject[key] }
+      }
+    } else {
+      populate = {
+        ...populate,
+        ...buildUpQuery({}, key, queryObject[key])
+      }
+    }
+  })
+  return [filter, populate]
+}
+
+const buildUpQuery = (obj, path, src) => {
   // start with
   for (let key in src) {
     // first, determine if the key has grandchildren.
-    if (typeof src[key] !== 'object' || src[key] == null) {
-      return base
+    if (isKeyNotObject(src, key)) {
+      return obj
     }
-    if (
-      Object.values(src[key]).some(val =>
-        Object.values(val).every(v => v === Object(v))
-      )
-    ) {
+    if (doesKeyHaveGrandchildren(src, key)) {
       path += `.${key}`
-      base = {
-        ...base,
-        ...buildUpQuery({ ...base }, path, src[key])
+      obj = {
+        ...obj,
+        ...buildUpQuery({ ...obj }, path, src[key])
       }
       // now, determine if the key comprehends a query
     } else {
-      if (Object.keys(src[key]).every(val => OPERATORS.includes(val))) {
-        base.path = path
-        base.match = { [key]: { ...src[key] } }
+      if (isKeyAFilter(src, key)) {
+        obj.path = path
+        obj.match = { [key]: { ...src[key] } }
       } else {
         path = key
-        base['populate'] = buildUpQuery({ ...base }, path, src[key])
+        obj['populate'] = buildUpQuery({ ...obj }, path, src[key])
       }
     }
   }
-  return base
+  return obj
 }
+
+const doesKeyHaveGrandchildren = (src, key) =>
+  Object.values(src[key]).some(val =>
+    Object.values(val).every(v => v === Object(v))
+  )
+
+const isKeyAFilter = (src, key) =>
+  Object.keys(src[key]).every(val => OPERATORS.includes(val))
+
+const isKeyNotObject = (src, key) =>
+  typeof src[key] !== 'object' || src[key] == null
