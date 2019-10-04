@@ -1,53 +1,27 @@
 const constructQuery = require('./constructQuery')
 
-test('constructs a valid mongoose populate object from a GraphQL query', () => {
+test('constructs a valid mongoose populate object for a shallow GraphQL query', () => {
   const graphQlQuery = {
     name: {
-      ne: 'Test Cocktail'
-    },
-    id: {
-      eq: '3'
+      ne: ''
     },
     ingredients: {
       ingredient: {
         name: {
-          eq: 'Test Cocktail'
-        },
-        family: {
-          name: {
-            eq: 'Amaro'
-          }
+          eq: 'Buffalo Trace Bourbon'
         }
       }
     }
   }
   expect(constructQuery(graphQlQuery)[0]).toEqual({
     name: {
-      $ne: 'Test Cocktail'
-    },
-    id: {
-      $eq: '3'
+      $ne: ''
     }
   })
   expect(constructQuery(graphQlQuery)[1]).toEqual({
     path: 'ingredients.ingredient',
-    match: { name: { $eq: 'Test Cocktail' } },
-    populate: {
-      path: 'family',
-      match: { name: { $eq: 'Amaro' } }
-    }
+    match: { name: { $eq: 'Buffalo Trace Bourbon' } }
   })
-
-  // const fullQuery = {
-  //   ingredients: {
-  //     ingredient: {
-  //       name: {
-  //         $in: ['Hullabaloo']
-  //       }
-  //     }
-  //   }
-  // }
-
   // expect(constructQuery(fullQuery, 'ingredients')).toEqual({
   //   path: 'ingredients.ingredient',
   //   match: {
@@ -56,4 +30,26 @@ test('constructs a valid mongoose populate object from a GraphQL query', () => {
   //     }
   //   }
   // })
+})
+
+test('returns a valid query for a deeply nested filter object', () => {
+  const fullQuery = {
+    ingredients: {
+      ingredient: {
+        family: {
+          name: {
+            $in: ['Hullabaloo']
+          }
+        }
+      }
+    }
+  }
+
+  expect(constructQuery(fullQuery)[1]).toEqual({
+    path: 'ingredients.ingredient',
+    populate: {
+      path: 'family',
+      match: { name: { $in: ['Hullabaloo'] } }
+    }
+  })
 })

@@ -25,18 +25,22 @@ const constructQueryParams = queryObject => {
   return [filter, populate]
 }
 
-const buildUpQuery = (obj, path, src) => {
+const buildUpQuery = (obj, path, src, level = 0) => {
   // start with
   for (let key in src) {
     // first, determine if the key has grandchildren.
     if (isKeyNotObject(src, key)) {
       return obj
     }
-    if (doesKeyHaveGrandchildren(src, key)) {
+    if (
+      doesKeyHaveGreatGrandchildren(src, key) ||
+      (level == 0 && isFilterGrandparent(src, key))
+    ) {
       path += `.${key}`
       obj = {
         ...obj,
-        ...buildUpQuery({ ...obj }, path, src[key])
+        path,
+        ...buildUpQuery({ ...obj }, path, src[key], ++level)
       }
       // now, determine if the key comprehends a query
     } else {
@@ -45,18 +49,26 @@ const buildUpQuery = (obj, path, src) => {
         obj.match = { [key]: { ...src[key] } }
       } else {
         path = key
-        obj['populate'] = buildUpQuery({ ...obj }, path, src[key])
+        obj['populate'] = buildUpQuery({ ...obj }, path, src[key], ++level)
       }
     }
   }
   return obj
 }
 
-const doesKeyHaveGrandchildren = (src, key) =>
+const doesKeyHaveGreatGrandchildren = (src, key) =>
   Object.values(src[key]).some(val =>
-    Object.values(val).every(v => v === Object(v))
+    Object.values(val).every(v => v === Object(v) && !Array.isArray(v))
   )
 
+exports.doesKeyHaveGreatGrandchildren = doesKeyHaveGreatGrandchildren
+
+const isFilterGrandparent = (src, key) =>
+  Object.keys(src[key]).some(val => {
+    return Object.keys(src[key][val]).every(v => {
+      return OPERATORS.includes(v)
+    })
+  })
 const isKeyAFilter = (src, key) =>
   Object.keys(src[key]).every(val => OPERATORS.includes(val))
 
