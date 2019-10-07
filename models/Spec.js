@@ -1,15 +1,12 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const slugify = require('slugify')
+const IngredientSchema = require('./Ingredient').schema
 
 const SpecIngredient = new Schema({
   quantity: Number,
   measure: Number,
-  ingredient: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'ingredients',
-    autopopulate: true
-  },
+  ingredient: IngredientSchema,
   canSub: Boolean,
   subWith: String
 })
@@ -66,7 +63,5 @@ SpecSchema.pre('save', function(next) {
     next()
   }
 })
-
-SpecSchema.plugin(require('mongoose-autopopulate'))
 
 module.exports = mongoose.model('Specs', SpecSchema)

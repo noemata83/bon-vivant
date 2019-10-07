@@ -1,5 +1,5 @@
 const Ingredient = require('../models/Ingredient').model
-const IngredientType = require('../models/IngredientType')
+const IngredientType = require('../models/IngredientType').model
 const ObjectId = require('mongoose').Types.ObjectId
 
 const registerIngredientType = async ingredientType => {
@@ -32,13 +32,12 @@ const deleteIngredientType = async id => {
 }
 
 const createIngredient = async ingredient => {
-  // ingredient.family = ingredient.family.map(async ingType => {
-  //   const foundType = await IngredientType.findOne({ name: ingType })
-  //   return foundType._id
-  // })
-  // await Promise.all(ingredient.family).then(completed => {
-  //   ingredient.family = completed
-  // })
+  ingredient.family = ingredient.family.map(async familyId => {
+    const family = await IngredientType.findById(familyId)
+    return family
+  })
+  const completed = await Promise.all(ingredient.family)
+  ingredient.family = completed
   const newIngredient = await Ingredient.create(ingredient)
   return newIngredient
 }

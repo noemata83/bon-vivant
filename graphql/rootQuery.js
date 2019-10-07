@@ -54,7 +54,7 @@ module.exports = new GraphQLObjectType({
         }
       },
       resolve(parentValue, args) {
-        return fetchAllSpecs(args.filter, args.limit)
+        return fetchAllSpecs(args.filter, args.limit, ['ingredients'])
       }
     },
     ingredient: {

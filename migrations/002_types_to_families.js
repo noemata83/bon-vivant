@@ -1,7 +1,7 @@
 const config = require('../config/keys'),
   mongoose = require('mongoose'),
   Ingredient = require('../models/Ingredient').model,
-  IngredientType = require('../models/IngredientType')
+  IngredientType = require('../models/IngredientType').model
 
 mongoose.Promise = global.Promise
 mongoose.set('useFindAndModify', false)

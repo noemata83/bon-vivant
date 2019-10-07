@@ -1,5 +1,6 @@
 const Spec = require('../models/Spec')
 const User = require('../models/User')
+const Ingredient = require('../models/Ingredient').model
 const { findIngredient } = require('./IngredientController')
 const { purgeDuplicates } = require('../shared/utility')
 const R = require('ramda')
@@ -13,7 +14,7 @@ const createSpec = async spec => {
   spec.ingredients = spec.ingredients.map(async ing => {
     const ingredient = await findIngredient({ name: ing.name })
     delete ing.name
-    return { ...ing, ingredient: ingredient._id }
+    return { ...ing, ingredient: ingredient }
   })
   await Promise.all(spec.ingredients).then(completed => {
     spec.ingredients = completed
@@ -21,13 +22,13 @@ const createSpec = async spec => {
   return Spec.create(spec)
 }
 
-const fetchAllSpecs = (rFilter, limit) => {
-  if (!rFilter) return Spec.find().limit(limit)
-  const filter = constructQuery(rFilter)
-  // console.log(limit)
-  return Spec.find(filter)
-    .populate('ingredients.ingredient')
-    .limit(limit)
+const fetchAllSpecs = async (rFilter, limit) => {
+  return (
+    Spec.find()
+      // .populate(populate)
+      .limit(limit)
+      .exec()
+  )
 }
 
 const findSpec = ({ id, slug, name }) => {
@@ -49,7 +50,7 @@ const editSpec = async (id, updates) => {
     updates.ingredients = updates.ingredients.map(async ing => {
       const ingredient = await findIngredient({ name: ing.name })
       delete ing.name
-      return { ...ing, ingredient: ingredient._id }
+      return { ...ing, ingredient: ingredient }
     })
     await Promise.all(updates.ingredients).then(completed => {
       updates.ingredients = completed

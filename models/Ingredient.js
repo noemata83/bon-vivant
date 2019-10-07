@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const slugify = require('slugify')
+const IngredientType = require('./IngredientType').schema
 
 const IngredientSchema = new Schema({
   name: {
@@ -10,13 +11,7 @@ const IngredientSchema = new Schema({
   slug: {
     type: String
   },
-  family: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'ingredientTypes',
-      autopopulate: true
-    }
-  ],
+  family: [IngredientType],
   description: String,
   spec: {
     type: mongoose.Schema.Types.ObjectId,
@@ -34,8 +29,6 @@ IngredientSchema.pre('save', function(next) {
     next()
   }
 })
-
-IngredientSchema.plugin(require('mongoose-autopopulate'))
 
 module.exports = {
   model: mongoose.model('ingredients', IngredientSchema),

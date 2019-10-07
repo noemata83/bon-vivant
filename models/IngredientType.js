@@ -26,4 +26,7 @@ IngredientTypeSchema.pre('save', function(next) {
   }
 })
 
-module.exports = mongoose.model('ingredientTypes', IngredientTypeSchema)
+module.exports = {
+  model: mongoose.model('ingredientTypes', IngredientTypeSchema),
+  schema: IngredientTypeSchema
+}
