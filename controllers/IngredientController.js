@@ -1,6 +1,8 @@
 const Ingredient = require('../models/Ingredient').model
 const IngredientType = require('../models/IngredientType').model
 const ObjectId = require('mongoose').Types.ObjectId
+const Spec = require('../models/Spec')
+const User = require('../models/User')
 
 const registerIngredientType = async ingredientType => {
   const newIngredientType = await IngredientType.create(ingredientType)
@@ -56,8 +58,46 @@ const findIngredient = ({ id, slug, name }) => {
   }
 }
 
-const editIngredient = (id, update) => {
-  return Ingredient.findByIdAndUpdate(id, update, { new: true })
+const editIngredient = async (id, update) => {
+  const updatedIngredient = await Ingredient.findByIdAndUpdate(id, update, {
+    new: true
+  })
+  // console.log(updatedIngredient)
+  await Spec.updateMany(
+    {
+      ingredients: {
+        $elemMatch: {
+          'ingredient._id': updatedIngredient.id
+        }
+      }
+    },
+    {
+      $set: {
+        'ingredients.$[a].ingredient': updatedIngredient
+      }
+    },
+    {
+      arrayFilters: [{ 'a.ingredient._id': updatedIngredient.id }]
+    }
+  ).exec()
+  await User.updateMany(
+    {
+      shelf: {
+        $elemMatch: {
+          _id: updatedIngredient.id
+        }
+      }
+    },
+    {
+      $set: {
+        'shelf.$[a]': updatedIngredient
+      }
+    },
+    {
+      arrayFilters: [{ 'a._id': updatedIngredient.id }]
+    }
+  )
+  return updatedIngredient
 }
 
 const deleteIngredient = id => {
