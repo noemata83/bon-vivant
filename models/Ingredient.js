@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 const slugify = require('slugify')
 const IngredientType = require('./IngredientType').schema
+// const Spec = require('./Spec')
+// const User = require('./User')
 
 const IngredientSchema = new Schema({
   name: {

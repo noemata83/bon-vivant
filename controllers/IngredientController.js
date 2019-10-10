@@ -62,7 +62,6 @@ const editIngredient = async (id, update) => {
   const updatedIngredient = await Ingredient.findByIdAndUpdate(id, update, {
     new: true
   })
-  // console.log(updatedIngredient)
   await Spec.updateMany(
     {
       ingredients: {
@@ -100,8 +99,30 @@ const editIngredient = async (id, update) => {
   return updatedIngredient
 }
 
-const deleteIngredient = id => {
-  return Ingredient.findByIdAndDelete(id)
+const deleteIngredient = async id => {
+  const ingredientToDelete = await Ingredient.findByIdAndDelete(id)
+  await Spec.deleteMany({
+    ingredients: {
+      $elemMatch: {
+        'ingredient._id': this.id
+      }
+    }
+  })
+  await User.updateMany(
+    {
+      shelf: {
+        $elemMatch: {
+          _id: this.id
+        }
+      }
+    },
+    {
+      $pullAll: {
+        'shelf._id': this.id
+      }
+    }
+  )
+  return ingredientToDelete
 }
 
 module.exports = {
