@@ -64,4 +64,9 @@ SpecSchema.pre('save', function(next) {
   }
 })
 
+SpecSchema.pre('remove', function(next) {
+  console.log(this)
+  next()
+})
+
 module.exports = mongoose.model('Specs', SpecSchema)

@@ -101,24 +101,24 @@ const editIngredient = async (id, update) => {
 
 const deleteIngredient = async id => {
   const ingredientToDelete = await Ingredient.findByIdAndDelete(id)
-  await Spec.deleteMany({
+  const specsToRemove = await Spec.find({
     ingredients: {
       $elemMatch: {
-        'ingredient._id': this.id
+        'ingredient._id': ingredientToDelete.id
       }
     }
-  })
+  }).remove()
   await User.updateMany(
     {
       shelf: {
         $elemMatch: {
-          _id: this.id
+          _id: ingredientToDelete.id
         }
       }
     },
     {
       $pullAll: {
-        'shelf._id': this.id
+        shelf: [{ id: ingredientToDelete.id }]
       }
     }
   )
