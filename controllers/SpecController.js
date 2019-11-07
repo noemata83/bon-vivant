@@ -4,7 +4,7 @@ const Ingredient = require('../models/Ingredient').model
 const { findIngredient } = require('./IngredientController')
 const { purgeDuplicates } = require('../shared/utility')
 const R = require('ramda')
-const constructQuery = require('../shared/constructQuery')
+const { castToQueryOps } = require('../shared/utility')
 
 const createSpec = async spec => {
   if (spec.riffOn) {
@@ -23,12 +23,10 @@ const createSpec = async spec => {
 }
 
 const fetchAllSpecs = async (rFilter, limit) => {
-  return (
-    Spec.find()
-      // .populate(populate)
-      .limit(limit)
-      .exec()
-  )
+  const query = castToQueryOps(rFilter)
+  return Spec.find(query)
+    .limit(limit)
+    .exec()
 }
 
 const findSpec = ({ id, slug, name }) => {

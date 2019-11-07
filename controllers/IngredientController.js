@@ -107,7 +107,10 @@ const deleteIngredient = async id => {
         'ingredient._id': ingredientToDelete.id
       }
     }
-  }).remove()
+  })
+  specsToRemove.forEach(spec => {
+    spec.remove()
+  })
   await User.updateMany(
     {
       shelf: {
