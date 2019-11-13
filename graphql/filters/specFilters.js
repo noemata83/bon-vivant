@@ -1,4 +1,4 @@
-const graphql = require('graphql')
+const graphql = require("graphql");
 const {
   GraphQLBoolean,
   GraphQLString,
@@ -8,7 +8,7 @@ const {
   GraphQLObjectType,
   GraphQLInputObjectType,
   GraphQLNonNull
-} = graphql
+} = graphql;
 const filterInputTypes = {
   eq: {
     type: GraphQLString
@@ -22,9 +22,9 @@ const filterInputTypes = {
   nin: {
     type: new GraphQLList(GraphQLString)
   }
-}
+};
 const SpecIdInput = new GraphQLInputObjectType({
-  name: 'Spec_ID_Input',
+  name: "Spec_ID_Input",
   fields: {
     eq: {
       type: GraphQLString
@@ -33,10 +33,10 @@ const SpecIdInput = new GraphQLInputObjectType({
       type: GraphQLString
     }
   }
-})
+});
 
 const SpecNameInput = new GraphQLInputObjectType({
-  name: 'Spec_Name_Input',
+  name: "Spec_Name_Input",
   fields: {
     eq: {
       type: GraphQLString
@@ -54,45 +54,33 @@ const SpecNameInput = new GraphQLInputObjectType({
       type: GraphQLString
     }
   }
-})
+});
 
 const FamilyNameFilterInput = new GraphQLInputObjectType({
-  name: 'Ingredient_Family_Name_Input',
+  name: "Ingredient_Family_Name_Input",
   fields: {
     ...filterInputTypes
   }
-})
+});
 
 const IngredientFamilyFilterInput = new GraphQLInputObjectType({
-  name: 'Ingredient_Family_Filter_Input',
+  name: "Ingredient_Family_Filter_Input",
   fields: {
     name: {
       type: FamilyNameFilterInput
     }
   }
-})
+});
 
 const IngredientNameFilterInput = new GraphQLInputObjectType({
-  name: 'Ingredient_Name_Filter_Input',
+  name: "Ingredient_Name_Filter_Input",
   fields: {
     ...filterInputTypes
   }
-})
-
-const SpecIngredientFilterInput = new GraphQLInputObjectType({
-  name: 'Spec_Ingredient_Filter_Input',
-  fields: {
-    name: {
-      type: IngredientNameFilterInput
-    },
-    family: {
-      type: IngredientFamilyFilterInput
-    }
-  }
-})
+});
 
 const SpecFilterInput = new GraphQLInputObjectType({
-  name: 'Spec_Filter_Input',
+  name: "Spec_Filter_Input",
   fields: {
     id: {
       type: SpecIdInput
@@ -100,17 +88,13 @@ const SpecFilterInput = new GraphQLInputObjectType({
     name: {
       type: SpecNameInput
     },
-    ingredients: {
-      type: new GraphQLInputObjectType({
-        name: 'Spec_Ingredients_Filter_Input',
-        fields: {
-          ingredient: {
-            type: SpecIngredientFilterInput
-          }
-        }
-      })
+    ingredients_ingredient_name: {
+      type: IngredientNameFilterInput
+    },
+    ingredients_ingredient_family: {
+      type: FamilyNameFilterInput
     }
   }
-})
+});
 
-module.exports = SpecFilterInput
+module.exports = SpecFilterInput;

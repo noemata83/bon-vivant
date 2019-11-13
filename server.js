@@ -1,13 +1,13 @@
-const express = require("express"),
+const express = require('express'),
   app = express(),
-  expressGraphQL = require("express-graphql"),
-  mongoose = require("mongoose"),
-  schema = require("./graphql/schema"),
-  config = require("./config/keys"),
-  logger = require("./shared/logger"),
-  jwt = require("express-jwt"),
-  bodyParser = require("body-parser"),
-  cors = require("cors")
+  expressGraphQL = require('express-graphql'),
+  mongoose = require('mongoose'),
+  schema = require('./graphql/schema'),
+  config = require('./config/keys'),
+  logger = require('./shared/logger'),
+  jwt = require('express-jwt'),
+  bodyParser = require('body-parser'),
+  cors = require('cors')
 
 const corsConfig = {
   origin: config.frontendOrigin,
@@ -15,8 +15,11 @@ const corsConfig = {
 }
 
 mongoose.Promise = global.Promise
-mongoose.set("useFindAndModify", false)
-mongoose.connect(config.mongoURI, { useNewUrlParser: true })
+mongoose.set('useFindAndModify', false)
+mongoose.connect(config.mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
 const auth = jwt({
   secret: config.JWT_SECRET,
@@ -24,7 +27,7 @@ const auth = jwt({
 })
 
 app.use(
-  "/graphql",
+  '/graphql',
   cors(corsConfig),
   bodyParser.json(),
   auth,
@@ -39,5 +42,5 @@ app.use(
 )
 
 app.listen(4000, () => {
-  logger.info("Bon Vivant Cocktail API running on port 4000")
+  logger.info('Bon Vivant Cocktail API running on port 4000')
 })

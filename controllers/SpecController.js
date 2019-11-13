@@ -1,96 +1,101 @@
-const Spec = require('../models/Spec')
-const User = require('../models/User')
-const Ingredient = require('../models/Ingredient').model
-const { findIngredient } = require('./IngredientController')
-const { purgeDuplicates } = require('../shared/utility')
-const R = require('ramda')
-const { castToQueryOps } = require('../shared/utility')
+const Spec = require("../models/Spec");
+const User = require("../models/User");
+const Ingredient = require("../models/Ingredient").model;
+const { findIngredient } = require("./IngredientController");
+const { purgeDuplicates } = require("../shared/utility");
+const R = require("ramda");
+const { constructSpecQuery } = require("../shared/constructQuery");
 
 const createSpec = async spec => {
   if (spec.riffOn) {
-    const riffSpec = await findSpec({ name: spec.riffOn })
-    spec.riffOn = riffSpec._id
+    const riffSpec = await findSpec({ name: spec.riffOn });
+    spec.riffOn = riffSpec._id;
   }
   spec.ingredients = spec.ingredients.map(async ing => {
-    const ingredient = await findIngredient({ name: ing.name })
-    delete ing.name
-    return { ...ing, ingredient: ingredient }
-  })
+    const ingredient = await findIngredient({ name: ing.name });
+    delete ing.name;
+    return { ...ing, ingredient: ingredient };
+  });
   await Promise.all(spec.ingredients).then(completed => {
-    spec.ingredients = completed
-  })
-  return Spec.create(spec)
-}
+    spec.ingredients = completed;
+  });
+  return Spec.create(spec);
+};
 
 const fetchAllSpecs = async (rFilter, limit) => {
-  const query = castToQueryOps(rFilter)
-  return Spec.find(query)
+  const query = constructSpecQuery(rFilter);
+  const sampleQuery = {
+    "ingredients.ingredient.family.name": {
+      $eq: "Rye Whiskey"
+    }
+  };
+  return Spec.find(sampleQuery)
     .limit(limit)
-    .exec()
-}
+    .exec();
+};
 
 const findSpec = ({ id, slug, name }) => {
   if (id) {
-    return Spec.findById(id)
+    return Spec.findById(id);
   } else if (slug) {
-    return Spec.findOne({ slug })
+    return Spec.findOne({ slug });
   } else {
-    return Spec.findOne({ name })
+    return Spec.findOne({ name });
   }
-}
+};
 
 const editSpec = async (id, updates) => {
   if (updates.riffOn) {
-    const riffSpec = await findSpec({ name: updates.riffOn })
-    updates.riffOn = riffSpec._id
+    const riffSpec = await findSpec({ name: updates.riffOn });
+    updates.riffOn = riffSpec._id;
   }
   if (updates.ingredients) {
     updates.ingredients = updates.ingredients.map(async ing => {
-      const ingredient = await findIngredient({ name: ing.name })
-      delete ing.name
-      return { ...ing, ingredient: ingredient }
-    })
+      const ingredient = await findIngredient({ name: ing.name });
+      delete ing.name;
+      return { ...ing, ingredient: ingredient };
+    });
     await Promise.all(updates.ingredients).then(completed => {
-      updates.ingredients = completed
-    })
+      updates.ingredients = completed;
+    });
   }
-  return Spec.findByIdAndUpdate(id, updates, { new: true })
-}
+  return Spec.findByIdAndUpdate(id, updates, { new: true });
+};
 
 const deleteSpec = async id => {
-  const childSpecCollection = await Spec.find({ riffOn: id }).exec()
+  const childSpecCollection = await Spec.find({ riffOn: id }).exec();
   childSpecCollection.forEach(childSpec => {
-    childSpec.riffOn = undefined
-    childSpec.save()
-  })
-  return Spec.findByIdAndDelete(id)
-}
+    childSpec.riffOn = undefined;
+    childSpec.save();
+  });
+  return Spec.findByIdAndDelete(id);
+};
 
 // TODO: This is broken now. FIX IT.
 const getAvailableSpecs = async userId => {
-  const user = await User.findById(userId)
-  const specificIngredients = user.shelf.map(ingredient => ingredient.name)
+  const user = await User.findById(userId);
+  const specificIngredients = user.shelf.map(ingredient => ingredient.name);
   const types = R.flatten(
     user.shelf.map(ingredient => ingredient.family.map(fam => fam.name))
-  )
-  const availableTypes = purgeDuplicates(types)
-  const allSpecs = await Spec.find()
+  );
+  const availableTypes = purgeDuplicates(types);
+  const allSpecs = await Spec.find();
   const specs = allSpecs.filter(spec => {
     const canMake = spec.ingredients.every(ing => {
       if (specificIngredients.includes(ing.ingredient.name)) {
-        return true
+        return true;
       }
       if (!ing.canSub && !specificIngredients.includes(ing.ingredient.name)) {
-        return false
+        return false;
       } else if (ing.canSub && !availableTypes.includes(ing.subWith)) {
-        return false
+        return false;
       }
-      return true
-    })
-    return canMake
-  })
-  return specs
-}
+      return true;
+    });
+    return canMake;
+  });
+  return specs;
+};
 
 module.exports = {
   createSpec,
@@ -99,4 +104,4 @@ module.exports = {
   editSpec,
   deleteSpec,
   getAvailableSpecs
-}
+};
