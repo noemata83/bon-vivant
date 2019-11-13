@@ -1,6 +1,5 @@
 const Spec = require("../models/Spec");
 const User = require("../models/User");
-const Ingredient = require("../models/Ingredient").model;
 const { findIngredient } = require("./IngredientController");
 const { purgeDuplicates } = require("../shared/utility");
 const R = require("ramda");
@@ -24,12 +23,7 @@ const createSpec = async spec => {
 
 const fetchAllSpecs = async (rFilter, limit) => {
   const query = constructSpecQuery(rFilter);
-  const sampleQuery = {
-    "ingredients.ingredient.family.name": {
-      $eq: "Rye Whiskey"
-    }
-  };
-  return Spec.find(sampleQuery)
+  return Spec.find(query)
     .limit(limit)
     .exec();
 };

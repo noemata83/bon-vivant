@@ -1,14 +1,5 @@
 const graphql = require("graphql");
-const {
-  GraphQLBoolean,
-  GraphQLString,
-  GraphQLFloat,
-  GraphQLEnumType,
-  GraphQLList,
-  GraphQLObjectType,
-  GraphQLInputObjectType,
-  GraphQLNonNull
-} = graphql;
+const { GraphQLString, GraphQLList, GraphQLInputObjectType } = graphql;
 const filterInputTypes = {
   eq: {
     type: GraphQLString
@@ -63,15 +54,6 @@ const FamilyNameFilterInput = new GraphQLInputObjectType({
   }
 });
 
-const IngredientFamilyFilterInput = new GraphQLInputObjectType({
-  name: "Ingredient_Family_Filter_Input",
-  fields: {
-    name: {
-      type: FamilyNameFilterInput
-    }
-  }
-});
-
 const IngredientNameFilterInput = new GraphQLInputObjectType({
   name: "Ingredient_Name_Filter_Input",
   fields: {
@@ -88,10 +70,10 @@ const SpecFilterInput = new GraphQLInputObjectType({
     name: {
       type: SpecNameInput
     },
-    ingredients_ingredient_name: {
+    ingredient: {
       type: IngredientNameFilterInput
     },
-    ingredients_ingredient_family: {
+    ingredientType: {
       type: FamilyNameFilterInput
     }
   }
