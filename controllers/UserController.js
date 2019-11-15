@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken")
 const config = require("../config/keys")
 
 const isDuplicate = (arr, id) => {
-  const found = arr.findIndex(item => item.id == id)
+  console.log(arr)
+  const found = arr.findIndex(item => item == id)
   return found != -1
 }
 
@@ -39,9 +40,7 @@ const addIngredientToShelf = async (userId, ingredientId) => {
   const user = await User.findById(userId)
   if (isDuplicate(user.shelf, ingredientId))
     throw new Error("Ingredient is already on your shelf.")
-  const ingredient = await Ingredient.findById(ingredientId)
-  if (!ingredient) throw new Error("Could not find ingredient.")
-  user.shelf.push(ingredient)
+  user.shelf.push(ingredientId)
   try {
     user.save()
     return user
@@ -63,11 +62,11 @@ const removeIngredientFromShelf = async (userId, ingredientId) => {
 
 const addSpecToBook = async (userId, specId) => {
   const user = await User.findById(userId)
-  if (isDuplicate(user.book, specId))
+  if (isDuplicate(user.book, specId)) {
     throw new Error("Spec is already in your cocktail book.")
-  const spec = await Spec.findById(specId)
-  if (!spec) throw new Error("Could not find spec.")
-  user.book.push(spec)
+  }
+  user.book.push(specId)
+  console.log(user)
   try {
     user.save()
     return user

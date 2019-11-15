@@ -1,8 +1,8 @@
-const Ingredient = require('../models/Ingredient').model
-const IngredientType = require('../models/IngredientType').model
-const ObjectId = require('mongoose').Types.ObjectId
-const Spec = require('../models/Spec')
-const User = require('../models/User')
+const Ingredient = require("../models/Ingredient").model
+const IngredientType = require("../models/IngredientType").model
+const ObjectId = require("mongoose").Types.ObjectId
+const Spec = require("../models/Spec")
+const User = require("../models/User")
 
 const registerIngredientType = async ingredientType => {
   const newIngredientType = await IngredientType.create(ingredientType)
@@ -66,17 +66,17 @@ const editIngredient = async (id, update) => {
     {
       ingredients: {
         $elemMatch: {
-          'ingredient._id': updatedIngredient.id
+          "ingredient._id": updatedIngredient.id
         }
       }
     },
     {
       $set: {
-        'ingredients.$[a].ingredient': updatedIngredient
+        "ingredients.$[a].ingredient": updatedIngredient
       }
     },
     {
-      arrayFilters: [{ 'a.ingredient._id': updatedIngredient.id }]
+      arrayFilters: [{ "a.ingredient._id": updatedIngredient.id }]
     }
   ).exec()
   await User.updateMany(
@@ -89,11 +89,11 @@ const editIngredient = async (id, update) => {
     },
     {
       $set: {
-        'shelf.$[a]': updatedIngredient
+        "shelf.$[a]": updatedIngredient
       }
     },
     {
-      arrayFilters: [{ 'a._id': updatedIngredient.id }]
+      arrayFilters: [{ "a._id": updatedIngredient.id }]
     }
   )
   return updatedIngredient
@@ -104,7 +104,7 @@ const deleteIngredient = async id => {
   const specsToRemove = await Spec.find({
     ingredients: {
       $elemMatch: {
-        'ingredient._id': ingredientToDelete.id
+        "ingredient._id": ingredientToDelete.id
       }
     }
   })
